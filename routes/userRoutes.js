@@ -1,6 +1,6 @@
 const express = require("express");
 const User = require("../models/User");
-
+const verifyToken = require("../config/authMiddleware");
 const {
   loginUser,
   registerUser,
@@ -107,6 +107,29 @@ router.get("/subscription", async (req, res) => {
     res.json(users); // Correct method to send JSON response
   } catch (err) {
     res.status(500).json({ error: "Failed to fetch users" });
+  }
+});
+
+router.get("/admin-dashboard", verifyToken, (req, res) => {
+  // Only authenticated users with valid JWT will reach here
+  if (req.user.role === "admin") {
+    res.json({ message: "Welcome to the admin dashboard" });
+  } else {
+    res
+      .status(403)
+      .json({ message: "Access denied. Insufficient permissions." });
+  }
+});
+
+// Superadmin Dashboard Route
+router.get("/superadmin-dashboard", verifyToken, (req, res) => {
+  // Only superadmin users can access this route
+  if (req.user.role === "superadmin") {
+    res.json({ message: "Welcome to the superadmin dashboard" });
+  } else {
+    res
+      .status(403)
+      .json({ message: "Access denied. Insufficient permissions." });
   }
 });
 module.exports = router;
