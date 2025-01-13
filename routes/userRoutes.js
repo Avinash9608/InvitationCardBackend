@@ -1,5 +1,6 @@
 const express = require("express");
 const User = require("../models/User");
+const router = express.Router();
 const verifyToken = require("../config/authMiddleware");
 const {
   loginUser,
@@ -7,9 +8,8 @@ const {
   forgotPassword,
   resetPassword,
 } = require("../controllers/userController");
-const verifyToken = require("../config/authMiddleware");
 
-const router = express.Router();
+
 
 router.get("/", async (req, res) => {
   try {
