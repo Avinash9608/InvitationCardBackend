@@ -184,14 +184,13 @@ exports.deleteWeddingById = async (req, res) => {
 };
 
 //Controller to get all backup wedding records
+//Controller to get all backup wedding records
 exports.getAllBackups = async (req, res) => {
   try {
-    const { id } = req.params;
-    const backups = await BackupWeddingForm.find({ weddingId: id });
+    const { weddingId } = req.params; // Use 'weddingId' instead of 'id'
+    const backups = await BackupWeddingForm.find({ weddingId: weddingId }); // Correctly query by weddingId
     if (!backups || backups.length === 0) {
-      return res
-        .status(404)
-        .json({ message: "No backups found for this wedding" });
+      return res.status(404).json({ message: "No backups found for this wedding" });
     }
     res.status(200).json(backups);
   } catch (error) {
@@ -202,3 +201,4 @@ exports.getAllBackups = async (req, res) => {
     });
   }
 };
+
