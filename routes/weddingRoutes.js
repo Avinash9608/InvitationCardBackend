@@ -16,5 +16,5 @@ router.put("/:id", weddingController.updateWeddingById);
 
 // Define route for deleting a wedding record by ID
 router.delete("/:id", weddingController.deleteWeddingById);
-router.get("/:weddingId", weddingController.getAllBackups);
+router.get("/", weddingController.getAllBackups);
 module.exports = router;
