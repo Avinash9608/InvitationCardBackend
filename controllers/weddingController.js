@@ -36,6 +36,10 @@ exports.submitWeddingForm = [
       const newWedding = new WeddingForm(weddingData);
       const savedWedding = await newWedding.save();
 
+      // Save the backup for the new wedding form
+      const backupWedding = new BackupWeddingForm(savedWedding.toObject());
+      await backupWedding.save(); // Save the backup
+
       res.status(201).json({
         message: "Wedding details successfully submitted!",
         data: savedWedding,
@@ -198,4 +202,3 @@ exports.getAllBackups = async (req, res) => {
     });
   }
 };
-
