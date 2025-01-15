@@ -1,41 +1,7 @@
 const WeddingForm = require("../models/WeddingForm");
+const BackupWeddingForm = require("../models/backupingmodel");
 const { body, validationResult } = require("express-validator");
 
-// Controller to handle form submission
-// exports.submitWeddingForm = [
-//   // Validation rules
-//   body("brideName").notEmpty().withMessage("Bride's name is required"),
-//   body("groomName").notEmpty().withMessage("Groom's name is required"),
-//   body("weddingDate").isDate().withMessage("Wedding date is invalid"),
-//   body("weddingLocation")
-//     .notEmpty()
-//     .withMessage("Wedding location is required"),
-//   body("brideImageUrl").isURL().withMessage("Invalid image URL for bride"),
-//   body("groomImageUrl").isURL().withMessage("Invalid image URL for groom"),
-
-//   // Validation handler
-//   async (req, res) => {
-//     const errors = validationResult(req);
-//     if (!errors.isEmpty()) {
-//       return res.status(400).json({ errors: errors.array() });
-//     }
-
-//     try {
-//       const weddingData = req.body;
-//       const newWedding = new WeddingForm(weddingData);
-//       const savedWedding = await newWedding.save();
-//       res.status(201).json({
-//         message: "Wedding details successfully submitted!",
-//         data: savedWedding,
-//       });
-//     } catch (error) {
-//       console.error("Error submitting wedding form:", error);
-//       res
-//         .status(500)
-//         .json({ message: "Error saving wedding form", error: error.message });
-//     }
-//   },
-// ];
 exports.submitWeddingForm = [
   // Validation rules
   body("brideName").notEmpty().withMessage("Bride's name is required"),
@@ -60,6 +26,8 @@ exports.submitWeddingForm = [
 
       // If there is existing data, delete it first
       if (existingWedding) {
+        const backupWedding = new BackupWeddingForm(existingWedding.toObject());
+        await backupWedding.save();
         await WeddingForm.deleteOne({ _id: existingWedding._id });
       }
 
@@ -208,5 +176,22 @@ exports.deleteWeddingById = async (req, res) => {
     res
       .status(500)
       .json({ message: "Error deleting wedding", error: error.message });
+  }
+};
+
+//Controller to get all backup wedding records
+exports.getAllBackups = async (req, res) => {
+  try {
+    const backups = await BackupWeddingForm.find(); // Or your backup logic
+    if (!backups) {
+      return res.status(404).json({ message: "No backups found" });
+    }
+    res.status(200).json(backups);
+  } catch (error) {
+    console.error("Error fetching backup wedding records:", error);
+    res.status(500).json({
+      message: "Error fetching backup wedding records",
+      error: error.message,
+    });
   }
 };
