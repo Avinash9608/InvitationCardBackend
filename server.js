@@ -10,6 +10,7 @@ const invitationRoutes = require("./routes/anniversaryRoutes");
 const contactRoutes = require("./routes/contactRoutes");
 const weddingRoutes = require("./routes/weddingRoutes");
 const weddingBackupRoutes = require("./routes/weddingBackup");
+const userAttendanceRoutes = require("./routes/userAttendanceRoutes");
 // Load environment variables
 dotenv.config();
 
@@ -89,6 +90,7 @@ app.get("/api/invitations-stats", async (req, res) => {
 
 app.use("/api/wedding", weddingRoutes);
 app.use("/api/backups", weddingBackupRoutes);
+app.use("/api/attendance", userAttendanceRoutes);
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () =>
   console.log(`Server running on http://localhost:${PORT}`)
