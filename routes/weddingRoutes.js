@@ -18,5 +18,5 @@ router.put("/:id", weddingController.updateWeddingById);
 router.delete("/:id", weddingController.deleteWeddingById);
 
 // Define route for fetching all backup wedding records (Backup specific route)
-router.get("/backups/:weddingId", weddingController.getAllBackups);
+router.get("/:weddingId", weddingController.getAllBackups);
 module.exports = router;
