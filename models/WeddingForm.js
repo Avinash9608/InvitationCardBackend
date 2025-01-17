@@ -11,22 +11,16 @@ const weddingFormSchema = new mongoose.Schema({
   brideDescription: { type: String, required: true },
   groomDescription: { type: String, required: true },
 
-  eventDetails: {
-    mainCeremony: {
+  eventDetails: [
+    {
+      type: { type: String, required: true }, // Type of party (e.g., ceremony, reception, etc.)
       title: { type: String, required: true },
-      timeStart: { type: String, required: true }, // Change this to String
-      timeEnd: { type: String, required: true }, // Keep timeEnd as String
-      date: { type: String, required: true },
+      timeStart: { type: String, required: true }, // Start time as String
+      timeEnd: { type: String, required: true }, // End time as String
+      date: { type: String, required: true }, // Date as String
       description: { type: String, required: true },
     },
-    weddingParty: {
-      title: { type: String, required: true },
-      timeStart: { type: String, required: true }, // Change this to String
-      timeEnd: { type: String, required: true }, // Keep timeEnd as String
-      date: { type: Date, required: true },
-      description: { type: String, required: true },
-    },
-  },
+  ],
 
   storyDetails: [
     {
