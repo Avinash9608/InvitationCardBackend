@@ -53,7 +53,6 @@ const { body, validationResult } = require("express-validator");
 //   },
 // ];
 
-
 exports.submitWeddingForm = [
   // Validation rules
   body("brideName").notEmpty().withMessage("Bride's name is required"),
@@ -81,10 +80,14 @@ exports.submitWeddingForm = [
       const newWedding = new WeddingForm(weddingData);
       const savedWedding = await newWedding.save();
 
+      // Save the same data in BackupWeddingForm
+      const backupWedding = new BackupWeddingForm(weddingData);
+      const savedBackup = await backupWedding.save();
+
       res.status(201).json({
         message:
-          "Previous records deleted. New wedding details successfully submitted!",
-        data: savedWedding,
+          "Previous records deleted. New wedding details successfully submitted and backed up!",
+        data: { savedWedding, savedBackup },
       });
     } catch (error) {
       console.error("Error submitting wedding form:", error);
@@ -94,6 +97,8 @@ exports.submitWeddingForm = [
     }
   },
 ];
+
+
 // Controller to fetch all wedding records
 exports.getAllWeddings = async (req, res) => {
   try {
