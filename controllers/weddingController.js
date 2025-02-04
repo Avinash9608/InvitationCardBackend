@@ -2,6 +2,58 @@ const WeddingForm = require("../models/WeddingForm");
 const BackupWeddingForm = require("../models/backupingmodel");
 const { body, validationResult } = require("express-validator");
 
+// exports.submitWeddingForm = [
+//   // Validation rules
+//   body("brideName").notEmpty().withMessage("Bride's name is required"),
+//   body("groomName").notEmpty().withMessage("Groom's name is required"),
+//   body("weddingDate").isDate().withMessage("Wedding date is invalid"),
+//   body("weddingLocation")
+//     .notEmpty()
+//     .withMessage("Wedding location is required"),
+//   body("brideImageUrl").isURL().withMessage("Invalid image URL for bride"),
+//   body("groomImageUrl").isURL().withMessage("Invalid image URL for groom"),
+
+//   // Validation handler
+//   async (req, res) => {
+//     const errors = validationResult(req);
+//     if (!errors.isEmpty()) {
+//       return res.status(400).json({ errors: errors.array() });
+//     }
+
+//     try {
+//       // Check if there is existing data in the database
+//       const existingWedding = await WeddingForm.findOne();
+
+//       // If there is existing data, delete it first
+//       if (existingWedding) {
+//         const backupWedding = new BackupWeddingForm(existingWedding.toObject());
+//         await backupWedding.save();
+//         await WeddingForm.deleteOne({ _id: existingWedding._id });
+//       }
+
+//       // Proceed to insert new data
+//       const weddingData = req.body;
+//       const newWedding = new WeddingForm(weddingData);
+//       const savedWedding = await newWedding.save();
+
+//       // Save the backup for the new wedding form
+//       const backupWedding = new BackupWeddingForm(savedWedding.toObject());
+//       await backupWedding.save(); // Save the backup
+
+//       res.status(201).json({
+//         message: "Wedding details successfully submitted!",
+//         data: savedWedding,
+//       });
+//     } catch (error) {
+//       console.error("Error submitting wedding form:", error);
+//       res
+//         .status(500)
+//         .json({ message: "Error saving wedding form", error: error.message });
+//     }
+//   },
+// ];
+
+
 exports.submitWeddingForm = [
   // Validation rules
   body("brideName").notEmpty().withMessage("Bride's name is required"),
@@ -21,38 +73,27 @@ exports.submitWeddingForm = [
     }
 
     try {
-      // Check if there is existing data in the database
-      const existingWedding = await WeddingForm.findOne();
+      // Delete all previous records from WeddingForm (but not BackupWeddingForm)
+      await WeddingForm.deleteMany({});
 
-      // If there is existing data, delete it first
-      if (existingWedding) {
-        const backupWedding = new BackupWeddingForm(existingWedding.toObject());
-        await backupWedding.save();
-        await WeddingForm.deleteOne({ _id: existingWedding._id });
-      }
-
-      // Proceed to insert new data
+      // Save the new wedding data in WeddingForm
       const weddingData = req.body;
       const newWedding = new WeddingForm(weddingData);
       const savedWedding = await newWedding.save();
 
-      // Save the backup for the new wedding form
-      const backupWedding = new BackupWeddingForm(savedWedding.toObject());
-      await backupWedding.save(); // Save the backup
-
       res.status(201).json({
-        message: "Wedding details successfully submitted!",
+        message:
+          "Previous records deleted. New wedding details successfully submitted!",
         data: savedWedding,
       });
     } catch (error) {
       console.error("Error submitting wedding form:", error);
       res
         .status(500)
-        .json({ message: "Error saving wedding form", error: error.message });
+        .json({ message: "Error saving wedding data", error: error.message });
     }
   },
 ];
-
 // Controller to fetch all wedding records
 exports.getAllWeddings = async (req, res) => {
   try {
